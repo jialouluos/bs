@@ -9,5 +9,5 @@ COPY dist/ $APP_PATH
 COPY bs.conf $APP_PATH
 COPY access.log $APP_PATH
 COPY ssl/ $APP_PATH/ssl
-COPY nginx.conf /etc/nginx/conf.d/nginx.conf
+COPY nginx.conf /etc/nginx/conf.d/bs.conf
 EXPOSE 80
