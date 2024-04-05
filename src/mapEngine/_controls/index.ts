@@ -67,7 +67,7 @@ export class OrbitControls extends EventDispatcher {
     /**@当前控制器的状态 */
     state: number;
     /**@更新函数 利用闭包 */
-    update: () => void;
+    update!: () => void;
     /**@缩放的速度 倍数*/
     scale: number;
     /**@平移相关 */
@@ -422,7 +422,7 @@ class Pan {
     /**@平移的偏移量 作用于相机坐标和相机焦点 */
     panOffset: Vector3;
     /**@将相机的平移转为屏幕空间的平移操作 确保相机的朝向和角度不会发生改变 */
-    screenSpacePanning: boolean;
+    screenSpacePanning: boolean = false;
     scope: OrbitControls;
     /**@记录偏移变化前的值 */
     panStart: Vector2;
@@ -538,7 +538,7 @@ class Rotate {
     rotateSpeed: number;
     /**@动画实例 */
     tween: any;
-    deltaTweenObject: {
+    deltaTweenObject!: {
         tempPhi: number;
         tempTheta: number;
         lastPhi: number;
