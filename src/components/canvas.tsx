@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import jsonData from '@/assets/json/chengdu.json';
+import { useEffect, useRef } from 'react';
+// import jsonData from '@/assets/json/chengdu.json';
 import { MapEngine } from '@/mapEngine/index';
-import { handleRawDataPipeline } from '@/mapEngine/_pipelines/handleRawDatapipeline';
+// import { handleRawDataPipeline } from '@/mapEngine/_pipelines/handleRawDatapipeline';
 
 export const Canvas = () => {
 	const isInitFinish = useRef(false);
