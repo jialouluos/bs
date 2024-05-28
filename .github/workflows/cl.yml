@@ -20,6 +20,8 @@ jobs:
           node-version: '20.x'
       # 安装依赖
       - name: Installing Dependencies
+        run: npm install pnpm
+      - name: Installing Dependencies
         run: pnpm install
       - name: build project
         run: pnpm run build
