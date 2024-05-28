@@ -11,7 +11,16 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': _resolve('src'),
+
+
     },
+  },
+
+  build: {
+    rollupOptions: {
+      input: './index.html',
+      external: [/.*public\/json\/.*.js$/, /.*threeWorker.js?raw$/],
+    }
   },
   css: {
     devSourcemap: true

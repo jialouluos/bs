@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { isObject } from '../../utils/tools';
+import { isObject } from '../utils/tools';
 export default class GCPool {
     sources!: Set<any>;
     _sources!: Set<any>;
@@ -51,14 +51,12 @@ export default class GCPool {
         obj.dispose && obj.dispose();
         return obj;
     }
-    disposeGroup(group: THREE.Group) {
-        if (group instanceof THREE.Group) {
-            this.track(group, this._sources);
-            this.allDispose(this._sources);
-        }
+    disposeGroup(object: any) {
+        this.track(object, this._sources);
+        this.allDispose(this._sources);
     }
     allDispose(sources: Set<any> = this.sources) {
-        for (let item of sources) {
+        for (const item of sources) {
             this.dispose(item);
         }
         sources.clear();
