@@ -1,11 +1,7 @@
 import { Canvas } from './components/canvas';
-import './app.css';
+import './App.css';
 function App() {
-	return (
-		<>
-			<Canvas></Canvas>
-		</>
-	);
+	return <Canvas></Canvas>;
 }
 
 export default App;
