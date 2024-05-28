@@ -1,0 +1,177 @@
+@mixin center() {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.load_mask {
+	z-index: 9999;
+	@include center();
+	width: 100%;
+	height: 100%;
+	min-height: inherit;
+}
+.load_style_box_1 {
+	$count: 9; //span数量
+
+	width: 10vw;
+
+	height: 10vw;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-5vw, -5vw);
+	margin: auto;
+	@include center();
+	color: #7371ee;
+
+	& > span {
+		transition: all 0.3s;
+		position: absolute;
+		--diameter: calc(10vw - (var(--n) - 1) * 1vw);
+		width: var(--diameter);
+		height: var(--diameter);
+		border-style: solid;
+		border-color: currentColor;
+		border-width: 0.2vw 0.2vw 0 0;
+		border-radius: 50%;
+		animation: rotation linear infinite;
+		rotate: calc(0.5turn * var(--n));
+		animation-duration: calc((7s - 0.6s * var(--n)));
+	}
+
+	@for $n from 1 through $count {
+		& :nth-child(#{$n}) {
+			--n: #{$n};
+		}
+	}
+	@keyframes rotation {
+		to {
+			transform: rotate(1turn);
+		}
+	}
+}
+
+.msg_root {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	top: 8px;
+	pointer-events: none;
+	z-index: 1010;
+}
+.message_modal {
+	@include center();
+	transition: all 0.3s;
+	padding: 10px 20px;
+	border-radius: 10px;
+	background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7));
+	margin: 10px 0px;
+	font-size: 14px;
+	color: #cccccc;
+}
+@mixin show($startY, $entY, $time, $animationName) {
+	animation: $animationName $time cubic-bezier(0.25, 0.46, 0.45, 0.94) 1 forwards;
+	@include keyframes($animationName) {
+		from {
+			opacity: 0;
+			transform: translate3d(0, #{$startY}, 0);
+		}
+		to {
+			opacity: 1;
+			transform: translate3d(0, #{$entY}, 0);
+		}
+	}
+}
+@mixin hidden($startY, $entY, $time, $animationName) {
+	animation: $animationName $time cubic-bezier(0.25, 0.46, 0.45, 0.94) 1 forwards;
+	@include keyframes($animationName) {
+		from {
+			opacity: 1;
+			transform: translate3d(0, #{$startY}, 0);
+		}
+		to {
+			opacity: 0;
+			transform: translate3d(0, #{$entY}, 0);
+		}
+	}
+}
+@mixin keyframes($animationName) {
+	@-webkit-keyframes #{$animationName} {
+		@content;
+	}
+	@-moz-keyframes #{$animationName} {
+		@content;
+	}
+	@-o-keyframes #{$animationName} {
+		@content;
+	}
+	@keyframes #{$animationName} {
+		@content;
+	}
+}
+
+.show {
+	@include show(0, 60px, 0.5s, show_msg);
+}
+.hidden {
+	@include hidden(60px, 0, 0.5s, hidden_msg);
+}
+.data-board {
+	width: 100vw;
+	height: 100vh;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	color: #fff;
+	box-shadow: inset 1px 0px 500px 200px #000000;
+
+	pointer-events: none;
+	.top {
+		width: 100%;
+		height: 60px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		color: rgb(207, 233, 218);
+
+		font-size: 28px;
+		font-style: normal;
+		font-weight: normal;
+		letter-spacing: 0px;
+		text-indent: 0px;
+		white-space: normal;
+
+		border-color: rgb(0, 0, 0);
+		border-style: none;
+		border-width: 0px;
+		background: rgb(16 12 36 / 58%);
+		// background-image: linear-gradient(120deg, rgb(148 186 215 / 28%) 0%, #97d5eb36 100%);
+	}
+	.body {
+		width: 100%;
+		height: calc(100% - 60px);
+		display: flex;
+		justify-content: space-between;
+		.left {
+			width: 400px;
+			height: 100%;
+			background: rgb(16 12 36 / 58%);
+			// background: linear-gradient(rgba(166, 166, 166, 0.6), rgba(113, 113, 113, 0.6));
+			ul {
+				padding: 0px 12px;
+				li {
+					color: rgb(207, 233, 218);
+
+					font-size: 18px;
+					margin: 10px 0px;
+				}
+			}
+		}
+		.right {
+			width: 400px;
+			height: 100%;
+			background: rgb(16 12 36 / 58%);
+			// background-image: linear-gradient(120deg, rgb(148 186 215 / 28%) 0%, #97d5eb36 100%);
+		}
+	}
+}

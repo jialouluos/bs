@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -33,3 +34,17 @@ function App() {
 }
 
 export default App
+=======
+import { Canvas } from './components/canvas';
+import './app.css';
+import { DataBoard } from './components/board';
+function App() {
+	return (
+		<>
+			<Canvas></Canvas>
+		</>
+	);
+}
+
+export default App;
+>>>>>>> abf4948 (init)
