@@ -1,0 +1,79 @@
+name: 毕设CICD
+on:
+  pull_request:
+    # branches: main
+  push:
+    branches: main
+    tags: version.*
+
+jobs:
+  push_docker_hub:
+    runs-on: ubuntu-latest
+    steps:
+      # 拉取项目代码
+      # 此处 actions/checkout 操作是从仓库拉取代码到Runner里的操作
+      - name: 正在拉取仓库代码...
+        uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - name: Cache
+        # 缓存命中结果会存储在steps.[id].outputs.cache-hit里，该变量在继后的step中可读
+        id: cache-dependencies
+        uses: actions/cache@v3
+        with:
+          # 缓存文件目录的路径
+          path: |
+            **/node_modules
+          # key中定义缓存标志位的生成方式。runner.OS指当前环境的系统。外加对yarn.lock内容生成哈希码作为key值，如果yarn.lock改变则代表依赖有变化。
+          # 这里用yarn.lock而不是package.json是因为package.json中还有version和description之类的描述项目但和依赖无关的属性
+          key: ${{runner.OS}}-${{hashFiles('**/yarn.lock')}}
+      # 安装依赖
+      - name: Installing Dependencies
+        # 如果缓存标志位没命中，则执行该step。否则就跳过该step
+        if: steps.cache-dependencies.outputs.cache-hit != 'true'
+        run: yarn install
+      - name: build project
+        run: yarn build
+      - name: 正在登录远程dockerHub...
+        run: |
+          docker login -u ${{secrets.DOCKER_USERNAME }} -p ${{ secrets. DOCKER_PASSWORD }}
+      - name: 正在构建image...
+        run: |
+          docker build -f ./Dockerfile -t ${{ vars.IMAGE_NAME }}:latest .
+          docker tag ${{ vars.IMAGE_NAME }}:latest ${{secrets.DOCKER_USERNAME }}/${{vars.DOCKER_REPOSITORY }}:latest
+      - name: 正在上传image...
+        run: |
+          docker push ${{secrets.DOCKER_USERNAME }}/${{vars.DOCKER_REPOSITORY }}:latest
+          docker logout
+  deploy_project:
+    needs: push_docker_hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: 登录服务器, 执行脚本
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ vars.REMOTE_HOST }}
+          username: ${{ vars.REMOTE_USERNAME }}
+          password: ${{ secrets.REMOTE_PASSWORD }}
+          # 执行脚本
+          script: |
+            sudo rm -f /etc/nginx/conf.d/bs.conf
+            sudo rm -rf /home/harver/nginx/bs_https_ssl/
+            echo -e "开始登录dockerHub..."
+            docker login -u ${{secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+            echo -e "开始清理旧容器..."
+            docker kill ${{ vars.IMAGE_NAME }}
+            docker rm -f ${{ vars.IMAGE_NAME }}
+            docker rmi -f ${{secrets.DOCKER_USERNAME }}/${{vars.DOCKER_REPOSITORY }}:latest
+            echo -e "开始拉取新镜像..."
+            docker pull ${{secrets.DOCKER_USERNAME }}/${{vars.DOCKER_REPOSITORY }}:latest
+            echo -e "开始创建并运行新容器..."
+            docker run -d -p 3004:80 --name ${{ vars.IMAGE_NAME }} ${{secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPOSITORY }}:latest
+            echo -e "开始更新Nginx..."
+            sudo docker cp ${{ vars.IMAGE_NAME }}:/app/bs.conf /etc/nginx/conf.d/
+            echo -e "开始SSL..."
+            sudo docker cp ${{ vars.IMAGE_NAME }}:/app/ssl/ /home/harver/nginx/bs_https_ssl/
+            sudo nginx -s reload
+            docker logout
