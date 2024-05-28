@@ -62,6 +62,7 @@ jobs:
             docker run -d -p 3004:80 --name ${{ vars.IMAGE_NAME }} ${{secrets.DOCKER_USERNAME }}/${{ vars.DOCKER_REPOSITORY }}:latest
             echo -e "开始更新Nginx..."
             sudo docker cp ${{ vars.IMAGE_NAME }}:/app/bs.conf /etc/nginx/conf.d/
+            sudo docker cp /home/harver/cityGeojson.js ${{ vars.IMAGE_NAME }}:/app/json/上海全城.js
             echo -e "开始SSL..."
             sudo docker cp ${{ vars.IMAGE_NAME }}:/app/ssl/ /home/harver/nginx/bs_https_ssl/
             sudo nginx -s reload
