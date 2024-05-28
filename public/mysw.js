@@ -1,9 +1,6 @@
-
 const CACHE_NAME = 'harver_bs_version_' + 5;
 
-const cacheList = [
-	'https://unpkg.com/comlink/dist/umd/comlink.js',
-];
+const cacheList = ['https://unpkg.com/comlink/dist/umd/comlink.js', 'https://www.bs.harver.cn/json/上海全城.js'];
 const tacticRules = [
 	{
 		name: 'image',

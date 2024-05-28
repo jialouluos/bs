@@ -139,14 +139,14 @@ export const Canvas = () => {
 		}
 	};
 	useEffect(() => {
-		// if ('serviceWorker' in navigator) {
-		// 	navigator.serviceWorker.getRegistrations().then(swList => {
-		// 		for (const sw of swList) {
-		// 			sw.unregister();
-		// 		}
-		// 		navigator.serviceWorker.register('/mysw.js', { scope: '/' });
-		// 	});
-		// }
+		if ('serviceWorker' in navigator) {
+			navigator.serviceWorker.getRegistrations().then(swList => {
+				for (const sw of swList) {
+					sw.unregister();
+				}
+				navigator.serviceWorker.register('/mysw.js', { scope: '/' });
+			});
+		}
 
 		if (isInitFinish.current) return;
 		setMapState(() => new MapEngine('#canvas_root'));
